@@ -161,12 +161,9 @@ namespace :gitdeploy do
     end
 
     task :public_folder do
-      if @deploy_public_folder
-        deploy_public_folder_path = [@deploy_public_host, @deploy_public_folder].compact.join(':')
-
-        puts "Deploying to #{deploy_public_folder_path} ..."
-        sh "rsync -rvz --delete public/ #{deploy_public_folder_path}"
-      end
+      path = "#{gitdeploy_host}:#{gitdeploy_deployments_path}/#{@git.rev[0..6]}"
+      puts "Deploying to #{path} ..."
+      sh "rsync -rvz --delete public/ #{path}"
     end
 
     desc 'Push deployments metadata to GitDeploy setup.'
