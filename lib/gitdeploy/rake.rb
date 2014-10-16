@@ -141,7 +141,7 @@ namespace :gitdeploy do
         tmp_file.flush
 
         puts "Writing commits metadata to #{gitdeploy_commits_json_path}"
-        sh "rsync -rvz -p --chmod 755 #{tmp_file.path} #{gitdeploy_host}:#{gitdeploy_commits_json_path}"
+        sh "rsync -rvz -p --chmod=og=rx #{tmp_file.path} #{gitdeploy_host}:#{gitdeploy_commits_json_path}"
 
         tmp_file.close
         tmp_file.unlink
@@ -160,7 +160,7 @@ namespace :gitdeploy do
     task :public_folder do
       path = "#{gitdeploy_host}:#{gitdeploy_deployments_path}/#{@git.rev[0..6]}"
       puts "Deploying to #{path} ..."
-      sh "rsync -rvz --delete -p --chmod 755 public/ #{path}"
+      sh "rsync -rvz --delete -p --chmod=og=rx public/ #{path}"
     end
 
     desc 'Push deployments metadata to GitDeploy setup.'
