@@ -186,7 +186,6 @@ namespace :gitdeploy do
 
     desc 'Reset the readme file.'
     task :clean do
-      Rake::Task[:clean].invoke
       rm_f('CHANGELOG')
       sh 'git checkout -- README.md'
     end
