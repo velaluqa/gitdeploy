@@ -141,13 +141,10 @@ namespace :gitdeploy do
         tmp_file.flush
 
         puts "Writing commits metadata to #{gitdeploy_commits_json_path}"
-        sh "rsync -rvz #{tmp_file.path} #{gitdeploy_host}:#{gitdeploy_commits_json_path}"
+        sh "rsync -rvz -p --chmod 755 #{tmp_file.path} #{gitdeploy_host}:#{gitdeploy_commits_json_path}"
 
         tmp_file.close
         tmp_file.unlink
-
-        puts "Make commits metadata file world-readable ..."
-        `ssh #{gitdeploy_host} chmod +r #{gitdeploy_commits_json_path}`
       end
     end
 
@@ -163,7 +160,7 @@ namespace :gitdeploy do
     task :public_folder do
       path = "#{gitdeploy_host}:#{gitdeploy_deployments_path}/#{@git.rev[0..6]}"
       puts "Deploying to #{path} ..."
-      sh "rsync -rvz --delete public/ #{path}"
+      sh "rsync -rvz --delete -p --chmod 755 public/ #{path}"
     end
 
     desc 'Push deployments metadata to GitDeploy setup.'
@@ -189,7 +186,6 @@ namespace :gitdeploy do
 
     desc 'Reset the readme file.'
     task :clean do
-      Rake::Task[:clean].invoke
       rm_f('CHANGELOG')
       sh 'git checkout -- README.md'
     end
