@@ -56,7 +56,11 @@ end
 
 def key
   @key ||= `ssh #{gitdeploy_host} ls #{gitdeploy_project_path}/metadata`.strip
-  @key ||= [('a'..'z'),('A'..'Z'),('0'..'9')].map(&:to_a).flatten.shuffle[0,8].join
+  if $? != 0 || @key.nil? || @key.empty?
+    @key = [('a'..'z'),('A'..'Z'),('0'..'9')].map(&:to_a).flatten.shuffle[0,8].join
+  end
+  @key
+
 end
 
 def gitdeploy_metadata_path
