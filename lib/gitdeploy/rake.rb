@@ -56,6 +56,7 @@ end
 
 def key
   @key ||= `ssh #{gitdeploy_host} ls #{gitdeploy_project_path}/metadata`.strip
+  @key ||= [('a'..'z'),('A'..'Z'),('0'..'9')].map(&:to_a).flatten.shuffle[0,8].join
 end
 
 def gitdeploy_metadata_path
@@ -92,8 +93,10 @@ namespace :gitdeploy do
         end
       end
       File.open('CHANGELOG', 'w+') { |f| f << changelog }
-      `git checkout -- README.md`
-      File.open('README.md', 'a+') { |f| f << "\n" << changelog }
+      if File.exists?('README.md')
+        `git checkout -- README.md`
+        File.open('README.md', 'a+') { |f| f << "\n" << changelog }
+      end
     end
 
     desc 'Zip everything into an archive.'
@@ -140,6 +143,9 @@ namespace :gitdeploy do
         tmp_file.write(json)
         tmp_file.flush
 
+        puts "Creating #{gitdeploy_metadata_path}"
+        sh "ssh #{gitdeploy_host} mkdir -p #{gitdeploy_metadata_path}"
+
         puts "Writing commits metadata to #{gitdeploy_commits_json_path}"
         sh "rsync -rvz -p --chmod=og=rx #{tmp_file.path} #{gitdeploy_host}:#{gitdeploy_commits_json_path}"
 
@@ -158,7 +164,12 @@ namespace :gitdeploy do
     end
 
     task :public_folder do
-      path = "#{gitdeploy_host}:#{gitdeploy_deployments_path}/#{@git.rev[0..6]}"
+      path =
+        "#{gitdeploy_host}:#{gitdeploy_deployments_path}/#{@git.rev[0..6]}"
+
+      puts "Ensuring existence of #{gitdeploy_deployments_path}"
+      sh "ssh #{gitdeploy_host} mkdir -p #{gitdeploy_deployments_path}"
+
       puts "Deploying to #{path} ..."
       sh "rsync -rvz --delete -p --chmod=og=rx public/ #{path}"
     end
@@ -187,7 +198,7 @@ namespace :gitdeploy do
     desc 'Reset the readme file.'
     task :clean do
       rm_f('CHANGELOG')
-      sh 'git checkout -- README.md'
+      sh 'git checkout -- README.md' if File.exists?('README.md')
     end
   end
 end
