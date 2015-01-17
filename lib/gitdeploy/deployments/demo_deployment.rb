@@ -3,8 +3,18 @@ require 'pry'
 
 module Gitdeploy
   class DemoDeployment < Deployment
+    attr_accessor :gitlab
+
     def initialize(options = {})
       super(options)
+
+      gitlab = case options[:gitlab]
+               when Hash then options[:gitlab]
+               when String then Gitdeploy.global.gitlab(options[:gitlab])
+               end
+      throw "No GitlabConfig given" unless gitlab
+      @gitlab = GitlabConfig.new(gitlab)
+
       @steps = [
         :ensure_dest_dirs,
         :rotate,
@@ -27,7 +37,7 @@ module Gitdeploy
     end
 
     def key
-      keys = list_directory(project_dir.join('metadata'))
+      keys = Dir.ls(project_dir.join('metadata'))
       if keys.empty?
         @key = [('a'..'z'),('A'..'Z'),('0'..'9')].map(&:to_a).flatten.shuffle[0,8].join
       else
@@ -49,7 +59,7 @@ module Gitdeploy
 
     ## Helpers
     def deployments
-      list_directory(deployments_dir).select { |p| p =~ /^[a-z0-9]*$/ }
+      Dir.ls(deployments_dir).select { |p| p =~ /^[a-z0-9]*$/ }
     end
 
     def commits
@@ -57,44 +67,44 @@ module Gitdeploy
         begin
           puts "Fetching commits metadata from gitlab ..."
           a = Mechanize.new
-          a.get(Gitdeploy.gitlab.sign_in_url) do |page|
+          a.get(gitlab.sign_in_url) do |page|
             page.form_with(action: '/users/sign_in') do |f|
-              f.field_with(name:'user[login]').value = Gitdeploy.gitlab.username
-              f.field_with(name:'user[password]').value = Gitdeploy.gitlab.password
+              f.field_with(name:'user[login]').value = gitlab.username
+              f.field_with(name:'user[password]').value = gitlab.password
             end.click_button
           end
-          page = a.get(Gitdeploy.gitlab.network_url)
+          page = a.get(gitlab.network_url)
           page.body
         end
     end
 
     ## Tasks
     def ensure_dest_dirs
-      ensure_directory(deployment_dir)
-      ensure_directory(metadata_dir)
+      Dir.ensure(deployment_dir)
+      Dir.ensure(metadata_dir)
     end
 
     def rotate
       if rotate?
         puts 'Remove all present deployments'
-        write_file(deployments_json, '[]')
-        clean_directory(deployments_dir)
+        File.write(deployments_json, '[]')
+        Dir.clean(deployments_dir)
       end
     end
 
     def deploy_commits
-      puts "Writing #{commits_json} ..."
-      write_file(commits_json, commits)
+      puts "Writing #{commits_json['[$path][ on $host]']} ..."
+      File.write(commits_json, commits)
     end
 
     def deploy_files
-      puts "Deploying to #{deployment_dir} ..."
-      system "rsync -rvz --delete -p --chmod=og=rx #{source} #{deployment_dir}"
+      puts "Deploying to #{deployment_dir['[$path][ on $host]']} ..."
+      Dir.sync(source, deployment_dir)
     end
 
     def deploy_index
-      puts "Writing #{deployments_json} ..."
-      write_file(deployments_json, deployments.to_json)
+      puts "Writing #{deployments_json['[$path][ on $host]']} ..."
+      File.write(deployments_json, deployments.to_json)
     end
   end
 end
