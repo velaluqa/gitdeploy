@@ -1,6 +1,7 @@
 module Gitdeploy
   class GlobalConfig < Hash
-    def initialize(options)
+    def initialize(options = {})
+      options ||= {}
       self[:auth] = (options['auth'] || {}).hmap do |k, v|
         [k, v.symbolize_keys]
       end
