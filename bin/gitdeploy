@@ -1,0 +1,22 @@
+#!/usr/bin/env ruby
+
+$LOAD_PATH << File.expand_path("../lib/", File.dirname(__FILE__))
+
+require 'gitdeploy'
+require 'trollop'
+
+opts = Trollop.options do
+  opt :project_file, 'File to look for project specific gitdeploy config', type: String, default: 'gitdeploy.yml'
+  opt :global_file,  'File to look for global gitdeploy config', type: String, default: '~/.gitdeploy.yml'
+end
+
+Gitdeploy.load(project_file: opts.project_file, global_file: opts.global_file)
+Gitdeploy.deployments.each do |deployment|
+  case deployment[:type]
+  when 'demo'    then Gitdeploy::DemoDeployment.new(deployment)
+  when 'archive' then Gitdeploy::ArchiveDeployment.new(deployment)
+  else Gitdeploy::SimpleDeployment.new(deployment)
+  end.tap do |handler|
+    handler.deploy if handler.match?
+  end
+end

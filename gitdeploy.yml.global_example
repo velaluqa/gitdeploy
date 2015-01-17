@@ -1,0 +1,12 @@
+# The demo configuration defines certain gitlab authentication credentials
+# to specify within the projects configuration so you can spare the git repository
+# from containing sensitive data.
+gitlab:
+  testGitlab:
+    host: 'gitlab.foo.com'
+    username: 'jenkins'
+    password: 'passwordExtraordinaire'
+# You may define `password` for the lftp client.
+auth:
+  jenkins@demo.foo.com:
+    password: 'passwordExtraordinaire'

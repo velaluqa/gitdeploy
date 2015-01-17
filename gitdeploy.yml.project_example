@@ -1,0 +1,19 @@
+customer: superclient
+project: superproject
+deployments:
+  - refs: tag
+    branch: develop|feature-.*|subfeature-.*
+    source: ./public/
+    destination:
+      path: ftps://jenkins@web.server.de:/
+      port: 21
+  - type: demo
+    branch: develop|feature-.*|subfeature-.*
+    gitlab: velaluqa
+    source: ./public/
+    destination: ssh://jenkins@test.server.com:/srv/test
+  - type: archive
+    refs: tag
+    branch: master
+    source: ./
+    destination: /owncloud/Shared/Archives/{{customer}}_{{project}}_{{tag}}.zip

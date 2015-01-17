@@ -4,21 +4,18 @@ class Git
   end
 
   def branch
-    @branch ||= (ENV['GIT_BRANCH'] || `cd #{@cwd}; git rev-parse --abbrev-ref HEAD`.strip)
+    @branch ||= (ENV['GIT_BRANCH'] ||
+                 `cd #{@cwd}; git rev-parse --abbrev-ref HEAD`.strip)
   end
 
   def branch_name
-    @branch_name ||= branch.gsub(/^[^\/]+\//, '')
+    @branch_name ||= branch.gsub(%r{^[^/]+/}, '')
   end
 
   def tag
     stdout = `cd #{@cwd}; git describe --tags 2>&1`
     status = $?
-    if status.exitstatus == 0
-      @tag ||= stdout.strip
-    else
-      nil
-    end
+    @tag ||= stdout.strip if status.exitstatus == 0
   end
 
   def rev

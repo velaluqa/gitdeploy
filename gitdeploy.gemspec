@@ -10,8 +10,8 @@ Gem::Specification.new do |spec|
   spec.email         = ['fkissig@velalu.qa', 'aandersen@velalu.qa']
   spec.summary       = %q{Push to a Gitdeploy setup with this Gitdeploy gem}
   spec.description   = %q{With this Gitdeploy gem, you can easily push your build folder to a Gitdeploy setup.}
-  spec.homepage      = 'https://git.velalu.qa/velaluqa/gitdeploy'
-  spec.license       = 'Proprietary'
+  spec.homepage      = 'https://github.com/velaluqa/gitdeploy'
+  spec.license       = 'MIT'
 
   spec.files         = `git ls-files -z`.split("\x0")
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
@@ -19,9 +19,14 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_dependency 'facets'
+  spec.add_dependency 'trollop'
   spec.add_dependency 'mechanize'
+  spec.add_dependency 'andand'
 
   spec.add_development_dependency 'bundler', '~> 1.6'
   spec.add_development_dependency 'rake'
   spec.add_development_dependency 'pry'
+  spec.add_development_dependency 'rspec'
+  spec.add_development_dependency 'guard'
+  spec.add_development_dependency 'guard-rspec'
 end
