@@ -11,9 +11,8 @@ module BuildReadme
         nil
       end
     end
-    tags
-      .compact!
-      .sort!
+    tags.compact!
+    tags.sort!
     tags.reverse_each do |tag|
       meta, message = `git cat-file -p \`git rev-parse #{tag}\``.split("\n\n", 2)
       changelog << "\n### #{tag}\n\n#{message}" if meta.include?('tagger ')
