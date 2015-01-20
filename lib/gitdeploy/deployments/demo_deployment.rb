@@ -33,7 +33,7 @@ module Gitdeploy
     end
 
     def deployment_dir
-      @deployment_dir ||= deployments_dir.join(git.rev[0..6], '')
+      @deployment_dir ||= deployments_dir.join(Git.rev[0..6], '')
     end
 
     def key

@@ -10,8 +10,11 @@ module Gitdeploy
           `lftp -c #{Shellwords.escape(command)}`
         end
 
-        def sync_directory(src, dst)
-          lftp "mirror -R '#{src}' '#{dst[PATH_SPEC]}'"
+        def sync_directory(src, dst, options = {})
+          flags = Command.flags(options[:flags])
+          opts  = Command.opts(options[:options])
+
+          lftp "mirror #{flags}#{opts} -R '#{src}' '#{dst[PATH_SPEC]}'"
         end
 
         def ensure_directory(dst)
