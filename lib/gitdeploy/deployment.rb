@@ -3,11 +3,9 @@ module Gitdeploy
   class UnknownProtocolError < Exception; end
 
   class Deployment
-    attr_accessor :git, :type, :source, :destination, :refs, :branch
+    attr_accessor :type, :source, :destination, :refs, :branch
 
     def initialize(options = {})
-      @git = Git.new(::File.expand_path(::Dir.pwd))
-
       @steps       = []
       @type        = options[:type]
       @refs        = options[:refs] || 'all'
@@ -23,8 +21,8 @@ module Gitdeploy
     end
 
     def match?
-      if /#{@branch}/.match(@git.branch_name)
-        if @refs == 'tag' && @git.tag.nil?
+      if /#{@branch}/.match(Git.branch_name)
+        if @refs == 'tag' && Git.tag.nil?
           false
         else
           true
@@ -54,24 +52,24 @@ module Gitdeploy
       str = str.clone
       str.gsub!('{{customer}}', Gitdeploy.customer)
       str.gsub!('{{project}}', Gitdeploy.project)
-      str.gsub!('{{tag}}', git.tag || git.rev)
+      str.gsub!('{{tag}}', Git.tag || Git.rev)
       str.gsub!('{{tag_or_rev(\[(\d+)\.\.(\d+)\])?}}') do
         if git.tag
-          git.tag
+          Git.tag
         elsif $2 && $3
-          git.rev[$2.to_i..$3.to_i]
+          Git.rev[$2.to_i..$3.to_i]
         else
-          git.rev
+          Git.rev
         end
       end
       str.gsub!(/{{rev(\[(\d+)\.\.(\d+)\])?}}/) do
         if $2 && $3
-          git.rev[$2.to_i..$3.to_i]
+          Git.rev[$2.to_i..$3.to_i]
         else
-          git.rev
+          Git.rev
         end
       end
-      str.gsub!('{{branch}}', git.branch_name)
+      str.gsub!('{{branch}}', Git.branch_name)
       str
     end
   end
