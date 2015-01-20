@@ -12,7 +12,7 @@ require 'gitdeploy/deployments/demo_deployment'
 require 'gitdeploy/command'
 require 'gitdeploy/protocols/local'
 require 'gitdeploy/protocols/ssh'
-require 'gitdeploy/protocols/ftps'
+require 'gitdeploy/protocols/ftp'
 require 'gitdeploy/mixins/hash'
 
 require 'facets'
@@ -43,7 +43,7 @@ module Gitdeploy
       @deployments = project['deployments'].map(&:deep_symbolize_keys)
 
       global  = load_global(options[:global_file])
-      @global      = GlobalConfig.new(global)
+      @global = GlobalConfig.new(global)
     end
   end
 end
