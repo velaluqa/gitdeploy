@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    gitdeploy (1.0.0)
+    gitdeploy (1.0.1)
       andand
       facets
       mechanize
