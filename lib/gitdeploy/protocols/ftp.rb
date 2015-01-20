@@ -2,7 +2,7 @@ require 'shellwords'
 
 module Gitdeploy
   module Protocols
-    module FTPS
+    module FTP
       class << self
         PATH_SPEC = "[$protocol://][$user[:$password]@][$host][:$port][$path]"
 
