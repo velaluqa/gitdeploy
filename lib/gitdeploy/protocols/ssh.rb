@@ -24,7 +24,7 @@ module Gitdeploy
           `rsync #{flags}#{opts}#{src} #{dst[RSYNC_PATH]}`
         end
 
-        def sync_directory(src, dst)
+        def sync_directory(src, dst, options = {})
           rsync src, dst,
                 port: dst.port,
                 flags: [:r, :v, :z, :p],

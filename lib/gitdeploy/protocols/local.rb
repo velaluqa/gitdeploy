@@ -2,7 +2,7 @@ module Gitdeploy
   module Protocols
     module Local
       class << self
-        def sync_directory(src, dst)
+        def sync_directory(src, dst, options = {})
           FileUtils.cp_r(src, dst.path)
         end
 
