@@ -1,8 +1,5 @@
-require 'gitdeploy/builder/build_readme'
-
 module Gitdeploy
   class SimpleDeployment < Deployment
-    include BuildReadme
     attr_accessor :exclude, :delete
 
     def initialize(options = {})
@@ -11,7 +8,7 @@ module Gitdeploy
       @exclude = options[:exclude]
       @delete  = options[:delete]
 
-      @steps = [:build_readme, :ensure_dest_dir, :deploy_files, :clean_readme]
+      @steps = [:ensure_dest_dir, :deploy_files]
     end
 
     def ensure_dest_dir
