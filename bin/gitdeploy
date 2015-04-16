@@ -12,11 +12,11 @@ end
 
 Gitdeploy.load(project_file: opts.project_file, global_file: opts.global_file)
 
-puts "Invoking gitdeploy on #{Git.pwd}"
-puts "  Branch: #{Git.branch}"
-puts "  Branchname: #{Git.branch_name}"
-puts "  Tag: #{Git.tag || 'n/A'}"
-puts "  Rev: #{Git.rev}"
+puts "Invoking gitdeploy on #{Gitdeploy::Git.pwd}"
+puts "  Branch: #{Gitdeploy::Git.branch}"
+puts "  Branchname: #{Gitdeploy::Git.branch_name}"
+puts "  Tag: #{Gitdeploy::Git.tag || 'n/A'}"
+puts "  Rev: #{Gitdeploy::Git.rev}"
 
 Gitdeploy.deployments.each do |deployment|
   case deployment[:type]
