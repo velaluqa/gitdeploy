@@ -1,12 +1,7 @@
-# coding: utf-8
-require 'gitdeploy/builder/build_readme'
-
 require 'fileutils'
 
 module Gitdeploy
   class ArchiveDeployment < Deployment
-    include BuildReadme
-
     attr_accessor :exclude_regex
 
     def initialize(options = {})
@@ -14,13 +9,7 @@ module Gitdeploy
 
       @exclude_regex = /#{options[:exclude_regex]}/
 
-      @steps = [
-        :build_readme,
-        :build_archive,
-        :deploy_archive,
-        :clean_archive,
-        :clean_readme
-      ]
+      @steps = [:build_archive, :deploy_archive, :clean_archive]
     end
 
     def package_file
