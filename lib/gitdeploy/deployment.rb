@@ -11,7 +11,7 @@ module Gitdeploy
       @refs        = options[:refs] || 'all'
       @branch      = options[:branch] || '.*'
       @rotate      = options[:rotate]
-      @source      = ::File.join(::File.expand_path(options[:source]), '')
+      @source      = ::File.join(options[:source] || '.', '')
       @destination = Path.new(options[:destination])
       @destination.path = replace_variables(@destination.path)
     end
