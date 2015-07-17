@@ -1,5 +1,3 @@
-require 'shellwords'
-
 module Gitdeploy
   module Protocols
     module FTP
@@ -14,7 +12,7 @@ module Gitdeploy
           flags = Command.flags(options[:flags])
           opts  = Command.opts(options[:options])
 
-          lftp "mirror #{flags}#{opts} -R '#{src}' '#{dst[PATH_SPEC]}'"
+          lftp "mirror #{flags}#{opts}-R '#{src}' '#{dst[PATH_SPEC]}'"
         end
 
         def ensure_directory(dst)

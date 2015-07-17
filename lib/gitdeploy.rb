@@ -16,6 +16,7 @@ require 'gitdeploy/protocols/ftp'
 require 'gitdeploy/mixins/hash'
 
 require 'facets'
+require 'shellwords'
 
 module Gitdeploy
   class << self

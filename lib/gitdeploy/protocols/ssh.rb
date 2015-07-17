@@ -21,7 +21,7 @@ module Gitdeploy
           flags = Command.flags(options[:flags])
           opts  = Command.opts(options[:options])
 
-          `rsync #{flags}#{opts}#{src} #{dst[RSYNC_PATH]}`
+          `rsync #{flags}#{opts}#{Shellwords.escape(src)} #{Shellwords.escape(dst[RSYNC_PATH])}`
         end
 
         def sync_directory(src, dst, options = {})
@@ -32,11 +32,11 @@ module Gitdeploy
         end
 
         def ensure_directory(dst)
-          ssh dst.full_host, "mkdir -p #{dst.path}", port: dst.port
+          ssh dst.full_host, "mkdir -p #{Shellwords.escape(dst.path)}", port: dst.port
         end
 
         def list_directory(dst)
-          res = ssh dst.full_host, "ls -1 #{dst.path}", port: dst.port
+          res = ssh dst.full_host, "ls -1 #{Shellwords.escape(dst.path)}", port: dst.port
           if $? == 0
             res.split("\n").map(&:strip)
           else
@@ -45,11 +45,11 @@ module Gitdeploy
         end
 
         def clear_directory(dst)
-          ssh dst.full_host, "find #{dst.path} -mindepth 1 -maxdepth 1 -type d -exec rm -R {} +", port: dst.port
+          ssh dst.full_host, "find #{Shellwords.escape(dst.path)} -mindepth 1 -maxdepth 1 -type d -exec rm -R {} +", port: dst.port
         end
 
         def file_exists?(dst)
-          ssh dst.full_host, "test -f #{dst.path}", port: dst.port
+          ssh dst.full_host, "test -f #{Shellwords.escape(dst.path)}", port: dst.port
         end
 
         def write_file(dst, content)
@@ -67,7 +67,7 @@ module Gitdeploy
         end
 
         def read_file(dst)
-          ssh dst.full_host, "cat #{dst.path}", port: dst.port
+          ssh dst.full_host, "cat #{Shellwords.escape(dst.path)}", port: dst.port
         end
 
         def copy_file(src, dst)
