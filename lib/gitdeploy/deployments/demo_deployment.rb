@@ -52,8 +52,8 @@ module Gitdeploy
       @metadata_dir ||= project_dir.join('metadata', key, '')
     end
 
-    def deployments_json
-      @deployments_json ||= metadata_dir.join('deployments.json')
+    def deployments_json_path
+      @deployments_json_path ||= metadata_dir.join('deployments.json')
     end
 
     def commits_json
@@ -65,8 +65,25 @@ module Gitdeploy
     end
 
     ## Helpers
-    def deployments
-      Dir.ls(deployments_dir).select { |p| p =~ /^[a-z0-9]*$/ }
+    def deployments_json
+      @deployments_json ||=
+        begin
+          ds = {}
+          Dir.ls(deployments_dir).each do |rev_dir|
+            if rev_dir =~ /^[a-z0-9]*$/
+              links_path = deployments_dir.join(rev_dir).join('.gitdeploy_links.json')
+              if File.exists?(links_path)
+                begin
+                  ds[rev_dir] = { links: JSON.parse(File.read(links_path)) }
+                rescue
+                  puts "Ignoring invalid JSON in #{links_path['[$path][ on $host]']}"
+                end
+              end
+              ds[rev_dir] ||= {}
+            end
+          end
+          ds
+        end.to_json
     end
 
     def commits
@@ -127,8 +144,8 @@ module Gitdeploy
     end
 
     def deploy_index
-      puts "Writing #{deployments_json['[$path][ on $host]']} ..."
-      File.write(deployments_json, deployments.to_json)
+      puts "Writing #{deployments_json_path['[$path][ on $host]']} ..."
+      File.write(deployments_json_path, deployments_json)
     end
   end
 end
