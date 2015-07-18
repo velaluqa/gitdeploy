@@ -53,7 +53,8 @@ module Gitdeploy
         end
 
         def file_exists?(dst)
-          ssh dst.full_host, "test -f #{Shellwords.escape(dst.path)}", port: dst.port
+          test_script = "test -e #{Shellwords.escape(dst.path)};echo $?"
+          ssh(dst.full_host, "sh -c #{Shellwords.escape(test_script)}", port: dst.port).strip == '0'
         end
 
         def write_file(dst, content)
