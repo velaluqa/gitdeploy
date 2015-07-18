@@ -27,6 +27,15 @@ module Gitdeploy
         else throw UnknownProtocolError, path.protocol
         end
       end
+
+      def exists?(path)
+        case path.protocol
+        when 'ftps', 'ftp', 'sftp' then Gitdeploy::Protocols::FTP.file_exists?(path)
+        when 'ssh'                 then Gitdeploy::Protocols::SSH.file_exists?(path)
+        when nil                   then Gitdeploy::Protocols::Local.file_exists?(path)
+        else throw UnknownProtocolError, path.protocol
+        end
+      end
     end
   end
 end
