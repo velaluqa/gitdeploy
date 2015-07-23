@@ -18,8 +18,10 @@ module Gitdeploy
 
     def build_archive
       puts "Packaging archive #{package_file} ..."
-      files = ::Dir["#{::File.join(source, '')}**/*"].select { |file| file !~ exclude_regex }
-      system "zip -q -r9 #{package_file} #{files.join(' ')}"
+      files = sources.map do |source|
+        ::Dir["#{::File.join(source, '')}**/*"].select { |file| file !~ exclude_regex }
+      end.flatten
+      system "zip -q -r9 #{package_file} #{Shellwords.join(files)}"
     end
 
     def deploy_archive

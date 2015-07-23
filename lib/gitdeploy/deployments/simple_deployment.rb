@@ -22,7 +22,7 @@ module Gitdeploy
       (options[:options] ||= {})[:exclude] = exclude if exclude
       (options[:flags] ||= []) << :e if delete
 
-      Dir.sync(source, destination, options)
+      Dir.sync(sources, destination, options)
     end
   end
 end

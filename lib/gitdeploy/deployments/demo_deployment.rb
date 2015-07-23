@@ -3,7 +3,7 @@ require 'pry'
 
 module Gitdeploy
   class DemoDeployment < Deployment
-    attr_accessor :gitlab
+    attr_accessor :gitlab, :links
 
     def initialize(options = {})
       super(options)
@@ -15,11 +15,14 @@ module Gitdeploy
       throw "No GitlabConfig given" unless gitlab
       @gitlab = GitlabConfig.new(gitlab)
 
+      @links = options[:links]
+
       @steps = [
         :ensure_dest_dirs,
         :rotate,
         :deploy_commits,
         :deploy_files,
+        :deploy_links,
         :deploy_index
       ]
     end
@@ -49,17 +52,38 @@ module Gitdeploy
       @metadata_dir ||= project_dir.join('metadata', key, '')
     end
 
-    def deployments_json
-      @deployments_json ||= metadata_dir.join('deployments.json')
+    def deployments_json_path
+      @deployments_json_path ||= metadata_dir.join('deployments.json')
     end
 
     def commits_json
       @commits_json ||= metadata_dir.join('commits.json')
     end
 
+    def links_json_path
+      @links_json_path ||= deployment_dir.join('.gitdeploy_links.json')
+    end
+
     ## Helpers
-    def deployments
-      Dir.ls(deployments_dir).select { |p| p =~ /^[a-z0-9]*$/ }
+    def deployments_json
+      @deployments_json ||=
+        begin
+          ds = {}
+          Dir.ls(deployments_dir).each do |rev_dir|
+            if rev_dir =~ /^[a-z0-9]*$/
+              links_path = deployments_dir.join(rev_dir).join('.gitdeploy_links.json')
+              if File.exists?(links_path)
+                begin
+                  ds[rev_dir] = { links: JSON.parse(File.read(links_path)) }
+                rescue
+                  puts "Ignoring invalid JSON in #{links_path['[$path][ on $host]']}"
+                end
+              end
+              ds[rev_dir] ||= {}
+            end
+          end
+          ds
+        end.to_json
     end
 
     def commits
@@ -75,6 +99,16 @@ module Gitdeploy
           end
           page = a.get(gitlab.network_url)
           page.body
+        end
+    end
+
+    def links_json
+      puts Git.rev
+      @links_json ||=
+        begin
+          links = {}
+          @links.keys.each {|key| links[key] = replace_variables(@links[key])}
+          links.to_json
         end
     end
 
@@ -99,12 +133,19 @@ module Gitdeploy
 
     def deploy_files
       puts "Deploying to #{deployment_dir['[$path][ on $host]']} ..."
-      Dir.sync(source, deployment_dir)
+      Dir.sync(sources, deployment_dir)
+    end
+
+    def deploy_links
+      unless @links.nil?
+        puts "Writing #{links_json_path['[$path][ on $host]']} ..."
+        File.write(links_json_path, links_json)
+      end
     end
 
     def deploy_index
-      puts "Writing #{deployments_json['[$path][ on $host]']} ..."
-      File.write(deployments_json, deployments.to_json)
+      puts "Writing #{deployments_json_path['[$path][ on $host]']} ..."
+      File.write(deployments_json_path, deployments_json)
     end
   end
 end

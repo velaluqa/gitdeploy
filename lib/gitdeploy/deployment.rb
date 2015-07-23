@@ -3,7 +3,7 @@ module Gitdeploy
   class UnknownProtocolError < Exception; end
 
   class Deployment
-    attr_accessor :type, :source, :destination, :refs, :branch
+    attr_accessor :type, :sources, :destination, :refs, :branch
 
     def initialize(options = {})
       @steps       = []
@@ -11,7 +11,7 @@ module Gitdeploy
       @refs        = options[:refs] || 'all'
       @branch      = options[:branch] || '.*'
       @rotate      = options[:rotate]
-      @source      = ::File.join(options[:source] || '.', '')
+      @sources     = [options[:sources] || options[:source] || '.'].flatten
       @destination = Path.new(options[:destination])
       @destination.path = replace_variables(@destination.path)
     end

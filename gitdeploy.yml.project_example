@@ -12,6 +12,9 @@ deployments:
     gitlab: velaluqa
     source: ./public/
     destination: ssh://jenkins@test.server.com:/srv/test
+    links:
+      google: http://google.com/search?q={{rev}}
+      documentation: doc/index.html
   - type: archive
     refs: tag
     branch: master
