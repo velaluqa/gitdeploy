@@ -2,8 +2,17 @@ module Gitdeploy
   module Protocols
     module Local
       class << self
-        def sync_directory(src, dst, options = {})
-          FileUtils.cp_r(src, dst.path)
+        def rsync(sources, dst, options = {})
+          flags = Command.flags(options[:flags])
+          opts  = Command.opts(options[:options])
+
+          `rsync #{flags}#{opts}#{Shellwords.join(sources)} #{Shellwords.escape(dst.path)}`
+        end
+
+        def sync_directories(sources, dst, options = {})
+          rsync sources, dst,
+                flags: [:r, :v, :z, :p],
+                options: { chmod: 'og=rx' }
         end
 
         def ensure_directory(dst)

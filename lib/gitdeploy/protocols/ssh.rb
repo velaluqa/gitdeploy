@@ -2,7 +2,8 @@ module Gitdeploy
   module Protocols
     module SSH
       class << self
-        RSYNC_PATH = '[$user@][$host:][$path]'
+        RSYNC_PATH_1 = '[$user@][$host:]'
+        RSYNC_PATH_2 = '[$path]'
 
         def ssh(host, command, options = {})
           (options[:options] ||= {})[:p] = options[:port] if options[:port]
@@ -13,19 +14,22 @@ module Gitdeploy
           `ssh #{flags}#{opts}#{host} #{Shellwords.escape(command)}`
         end
 
-        def rsync(src, dst, options = {})
+        def rsync(sources, dst, options = {})
           if options[:port]
             (options[:options] ||= {})[:e] = "ssh -p #{options[:port]}"
           end
 
+          sources = [sources] unless sources.is_a?(Array)
+
           flags = Command.flags(options[:flags])
           opts  = Command.opts(options[:options])
 
-          `rsync #{flags}#{opts}#{Shellwords.escape(src)} #{Shellwords.escape(dst[RSYNC_PATH])}`
+          # http://serverfault.com/questions/234876/escaping-spaces-in-a-remote-path-when-using-rsync-over-a-remote-ssh-connection
+          `rsync #{flags}#{opts}#{Shellwords.join(sources)} #{Shellwords.escape(dst[RSYNC_PATH_1])}#{Shellwords.escape(Shellwords.escape(dst[RSYNC_PATH_2]))}`
         end
 
-        def sync_directory(src, dst, options = {})
-          rsync src, dst,
+        def sync_directories(sources, dst, options = {})
+          rsync sources, dst,
                 port: dst.port,
                 flags: [:r, :v, :z, :p],
                 options: { chmod: 'og=rx' }

@@ -1,11 +1,11 @@
 module Gitdeploy
   class Dir
     class << self
-      def sync(src, dst, options = {})
+      def sync(sources, dst, options = {})
         case dst.protocol
-        when 'ftps', 'ftp', 'sftp' then Gitdeploy::Protocols::FTP.sync_directory(src, dst, options)
-        when 'ssh'                 then Gitdeploy::Protocols::SSH.sync_directory(src, dst, options)
-        when nil                   then Gitdeploy::Protocols::Local.sync_directory(src, dst, options)
+        when 'ftps', 'ftp', 'sftp' then Gitdeploy::Protocols::FTP.sync_directories(sources, dst, options)
+        when 'ssh'                 then Gitdeploy::Protocols::SSH.sync_directories(sources, dst, options)
+        when nil                   then Gitdeploy::Protocols::Local.sync_directories(sources, dst, options)
         else throw UnknownProtocolError, dst.protocol
         end
       end

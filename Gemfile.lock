@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    gitdeploy (1.0.2)
+    gitdeploy (1.4.0)
       andand
       facets
       mechanize
@@ -15,7 +15,7 @@ GEM
       timers (~> 4.0.0)
     coderay (1.1.0)
     diff-lcs (1.2.5)
-    domain_name (0.5.23)
+    domain_name (0.5.24)
       unf (>= 0.0.5, < 1.0.0)
     facets (3.0.0)
     ffi (1.9.6)
@@ -52,12 +52,12 @@ GEM
       ntlm-http (~> 0.1, >= 0.1.1)
       webrobots (>= 0.0.9, < 0.2)
     method_source (0.8.2)
-    mime-types (2.4.3)
+    mime-types (2.6.1)
     mini_portile (0.6.2)
     nenv (0.1.1)
     net-http-digest_auth (1.4)
     net-http-persistent (2.9.4)
-    nokogiri (1.6.5)
+    nokogiri (1.6.6.2)
       mini_portile (~> 0.6.0)
     notiffany (0.0.3)
       nenv (~> 0.1)
@@ -88,10 +88,10 @@ GEM
     thor (0.19.1)
     timers (4.0.1)
       hitimes
-    trollop (2.1.1)
+    trollop (2.1.2)
     unf (0.1.4)
       unf_ext
-    unf_ext (0.0.6)
+    unf_ext (0.0.7.1)
     webrobots (0.1.1)
 
 PLATFORMS
@@ -105,3 +105,6 @@ DEPENDENCIES
   pry
   rake
   rspec
+
+BUNDLED WITH
+   1.10.5

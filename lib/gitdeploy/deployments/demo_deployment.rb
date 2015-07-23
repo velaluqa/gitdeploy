@@ -99,7 +99,7 @@ module Gitdeploy
 
     def deploy_files
       puts "Deploying to #{deployment_dir['[$path][ on $host]']} ..."
-      Dir.sync(source, deployment_dir)
+      Dir.sync(sources, deployment_dir)
     end
 
     def deploy_index

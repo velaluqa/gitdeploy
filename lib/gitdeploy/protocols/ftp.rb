@@ -8,11 +8,17 @@ module Gitdeploy
           `lftp -c #{Shellwords.escape(command)}`
         end
 
-        def sync_directory(src, dst, options = {})
+        def sync_directories(sources, dst, options = {})
+          if sources.length > 1 and options[:flags] and (options[:flags].include?('e') or options[:flags].include?('delete'))
+            throw 'Deleting files not present at remote site is not supported with multiple sources.'
+          end
+
           flags = Command.flags(options[:flags])
           opts  = Command.opts(options[:options])
 
-          lftp "mirror #{flags}#{opts}-R '#{src}' '#{dst[PATH_SPEC]}'"
+          sources.each do |src|
+            lftp "mirror #{flags}#{opts}-R '#{src}' '#{dst[PATH_SPEC]}'"
+          end
         end
 
         def ensure_directory(dst)
