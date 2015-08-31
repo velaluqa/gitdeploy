@@ -24,7 +24,7 @@ module Gitdeploy
         end
 
         def list_directory(dst)
-          Dir.entries(dst.path) - ['.', '..']
+          ::Dir.entries(dst.path) - ['.', '..']
         end
 
         def clear_directory(dst)
@@ -33,15 +33,15 @@ module Gitdeploy
         end
 
         def file_exists?(dst)
-          File.exist?(dst.path)
+          ::File.exist?(dst.path)
         end
 
         def write_file(dst, content)
-          File.open(dst.path, 'w+') { |f| f.write(content) }
+          ::File.open(dst.path, 'w+') { |f| f.write(content) }
         end
 
         def read_file(dst)
-          File.read(dst.path)
+          ::File.read(dst.path)
         end
 
         def copy_file(src, dst)
