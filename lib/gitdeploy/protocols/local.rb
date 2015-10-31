@@ -25,6 +25,8 @@ module Gitdeploy
 
         def list_directory(dst)
           ::Dir.entries(dst.path) - ['.', '..']
+        rescue
+          []
         end
 
         def clear_directory(dst)
