@@ -1,3 +1,3 @@
 module Gitdeploy
-  VERSION = '1.4.1'
+  VERSION = '1.4.3'
 end
