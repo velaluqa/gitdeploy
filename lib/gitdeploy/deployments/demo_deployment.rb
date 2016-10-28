@@ -1,3 +1,5 @@
+require 'json'
+
 require 'mechanize'
 
 module Gitdeploy
