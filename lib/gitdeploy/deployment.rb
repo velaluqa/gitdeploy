@@ -21,7 +21,7 @@ module Gitdeploy
     end
 
     def match?
-      if /#{@branch}/.match(Git.branch_name)
+      if /#{@branch}/.match(Git.branch)
         if @refs == 'tag' && Git.tag.nil?
           false
         else
@@ -69,7 +69,7 @@ module Gitdeploy
           Git.rev
         end
       end
-      str.gsub!('{{branch}}', Git.branch_name)
+      str.gsub!('{{branch}}', Git.branch)
       str
     end
   end
