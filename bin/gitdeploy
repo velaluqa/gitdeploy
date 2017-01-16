@@ -14,7 +14,6 @@ Gitdeploy.load(project_file: opts.project_file, global_file: opts.global_file)
 
 puts "Invoking gitdeploy on #{Gitdeploy::Git.pwd}"
 puts "  Branch: #{Gitdeploy::Git.branch}"
-puts "  Branchname: #{Gitdeploy::Git.branch_name}"
 puts "  Tag: #{Gitdeploy::Git.tag || 'n/A'}"
 puts "  Rev: #{Gitdeploy::Git.rev}"
 

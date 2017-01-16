@@ -7,7 +7,7 @@ module Gitdeploy
     end
 
     def network_url
-      "https://#{host}/#{Gitdeploy.customer}/#{Gitdeploy.project}/network/develop.json"
+      "https://#{host}/#{Gitdeploy.customer}/#{Gitdeploy.project}/network/develop?format=json"
     end
   end
 end

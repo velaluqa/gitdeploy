@@ -8,11 +8,8 @@ module Gitdeploy
       end
 
       def branch
-        @branch ||= (ENV['GIT_BRANCH'] || `cd #{pwd}; git rev-parse --abbrev-ref HEAD`.strip)
-      end
-
-      def branch_name
-        @branch_name ||= branch.gsub(%r{^[^/]+/}, '')
+        @branch ||= (ENV['GIT_BRANCH'] ||
+                     `cd #{pwd}; git branch -a -v --abbrev=40 | grep #{rev} | awk '{print $1}' | grep -v '*' | head -n1 | awk -F '/' '{print $NF}'`.strip)
       end
 
       def tag
